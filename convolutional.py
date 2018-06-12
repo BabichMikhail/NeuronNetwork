@@ -184,11 +184,20 @@ class ConvolutionalNetwork:
                         for p in range(len(self.full_connection_weights[k][j])):
                             self.full_connection_weights[k][j][p] += self.learning_rate * result[k][j] * full_conn_errors[k][p]
 
-                convolve_error = full_conn_errors[0]
-                for i in range(3):
-                    convolve_error_part = convolve_error[i * len(result): (i + 1) * len(result)]
-                    for j in range(len(convolve_error_part)):
-                        pass
+                convolve_errors = [{} for j in range(len(convolve_result) - 1)]
+                convolve_errors[-1] = full_conn_errors[0]
+                # convolve_error[-1] = full_conn_errors[0]
+                for k in range(len(convolve_result) - 2):
+                    for i in range(3):
+                        left = i * len(result)
+                        right = (i + 1) * len(result)
+                        convolve_error_part = convolve_errors[-1][left:right]
+                        for j in range(len(convolve_error_part)):
+                            for p in range(len(convolve_result[k][1][j])):
+                                for q in range(len(convolve_result[k][1][j][p])):
+                                    # convolve_errors[-k - 2]
+                                    # convolve_result[k][1]
+                                    pass
 
             if abs(result_error) < self.max_error:
                 break
