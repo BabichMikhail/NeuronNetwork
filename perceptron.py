@@ -27,7 +27,7 @@ class Network:
     layers = None
 
     learning_rate = 0.1
-    max_error = 0.0001
+    max_error = 0.005
 
     def __init__(self, nodes_count_per_layer):
         self.layers = []
@@ -69,7 +69,7 @@ class Network:
                 for j in range(len(expected_values)):
                     errors[-1][j] = expected_values[j] - result[-1][j]
                     result_error += errors[-1][j] ** 2
-                result_error /= 2.0
+                # result_error /= 2.0
                 # print(result_error)
                 # print(errors)
 
