@@ -162,7 +162,7 @@ class ConvolutionalNetwork:
                 expected_values = expected_values_vectors[q]
 
                 convolve_result, result = self.get_study_data(original_mats[q])
-                full_conn_errors = [{} for j in range(len(result) - 1)]
+                full_conn_errors = [{} for j in range(len(result))]
                 for j in range(len(expected_values)):
                     full_conn_errors[-1][j] = expected_values[j] - result[-1][j]
                     result_error += full_conn_errors[-1][j] ** 2
@@ -171,7 +171,7 @@ class ConvolutionalNetwork:
                 print(expected_values)
                 print(full_conn_errors)
 
-                for k in range(len(result) - 2):
+                for k in range(len(result) - 1):
                     for j in result[-k - 2]:
                         for p in range(len(self.full_connection_weights[-k - 1][j])):
                             if j not in full_conn_errors[-k - 2]:
@@ -184,8 +184,36 @@ class ConvolutionalNetwork:
                         for p in range(len(self.full_connection_weights[k][j])):
                             self.full_connection_weights[k][j][p] += self.learning_rate * result[k][j] * full_conn_errors[k][p]
 
-                convolve_errors = [{} for j in range(len(convolve_result) - 1)]
-                convolve_errors[-1] = full_conn_errors[0]
+                convolve_errors = [
+                    [
+                        [[] for i in range(len(convolve_result[-1][1][0]))] for j in range(len(convolve_result[-1][1]))
+                    ] for k in range(len(convolve_result) - 1)
+                ]
+
+                print(len(full_conn_errors[0]))
+
+                # convolve_errors = [[{} for j in range(len(convolve_result) - 1)] for i in range(3)]
+                layer_count = len(convolve_result[-1][1])
+                for i in range(layer_count):
+                    width = len(convolve_result[-1][1][i][0])
+                    height = len(convolve_result[-1][1][i])
+                    print(width)
+                    print(height)
+                    error = [[0.0 for q in range(width)] for w in range(height)]
+                    for j in range(len(result[0]) // layer_count):
+                        y = j // width
+                        x = j - (y * width)
+                        assert y < height
+                        # print(j)
+                        # print(len(result[0]))
+                        # print(layer_count)
+                        error[x][y] = full_conn_errors[0][j + i * len(result[0]) // layer_count]
+                    convolve_errors[0][i] = error
+
+                print(convolve_errors[0])
+                print(len(convolve_errors[0]))
+                print(len(convolve_errors))
+                assert False
                 # convolve_error[-1] = full_conn_errors[0]
                 for k in range(len(convolve_result) - 2):
                     for i in range(3):
